@@ -1,5 +1,5 @@
 import com.databricks.spark.sql.perf.tpcds.TPCDSTables
-
+import java.nio.file.FileSystems
 // Note: Declare "sqlContext" for Spark 2.x version
 val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 
@@ -7,13 +7,14 @@ val sqlContext = new org.apache.spark.sql.SQLContext(sc)
 // Note: Here my env is using MapRFS, so I changed it to "hdfs:///tpcds".
 // Note: If you are using HDFS, the format should be like "hdfs://namenode:9000/tpcds"
 val rootDir = "hdfs:///tpcds" //"/mnt/tpcds-sf1" // root directory of location to create data in.
-
+val tpcdsDir = "./tpcds-kit/tools"
+val absolutePath = FileSystems.getDefault().getPath(tpcdsDir).normalize().toAbsolutePath().toString();
 val databaseName = "tpcds" // name of database to create.
 val scaleFactor = "1" // scaleFactor defines the size of the dataset to generate (in GB).
 val format = "parquet" // valid spark format like parquet "parquet".
 // Run:
 val tables = new TPCDSTables(sqlContext,
-    dsdgenDir = "/home/hadoop/tpcds-kit/tools", // location of dsdgen
+    dsdgenDir = absolutePath, // location of dsdgen
     scaleFactor = scaleFactor,
     useDoubleForDecimal = false, // true to replace DecimalType with DoubleType
     useStringForDate = false) // true to replace DateType with StringType
